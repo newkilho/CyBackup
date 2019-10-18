@@ -235,17 +235,20 @@ begin
 end;
 
 procedure TFrmHome.Save_Image(HTTP: THTTP; ImageList: TStringList);
-var
-  URL, Output: string;
-  Loop: Integer;
 begin
-  for Loop := 0 to ImageList.Count-1 do
+  Wait(procedure()
+  var
+    URL, Output: string;
+    Loop: Integer;
   begin
-    URL := ImageList.Strings[Loop];
-    Output := ExtractFilePath(ParamStr(0))+'cy-'+Format('%0.6d', [Loop+1])+'.jpg';
+    for Loop := 0 to ImageList.Count-1 do
+    begin
+      URL := ImageList.Strings[Loop];
+      Output := ExtractFilePath(ParamStr(0))+'cy-'+Format('%0.6d', [Loop+1])+'.jpg';
 
-    DownloadFile(HTTP, URL, Output);
-  end;
+      DownloadFile(HTTP, URL, Output);
+    end;
+  end);
 end;
 
 end.
