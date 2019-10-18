@@ -116,6 +116,13 @@ begin
   Indicator.Animate := True;
   Indicator.Visible := True;
 
+  CreateDir(ExtractFilePath(ParamStr(0))+'Images');
+  if not DirectoryExists(ExtractFilePath(ParamStr(0))+'Images') then
+  begin
+    Showmessage('파일을 생성할 수 없습니다.');
+    Halt;
+  end;
+
   HTTP := THTTP.Create;
 
   Get_RSA(Edit_ID.Text, Edit_PW.Text, UserID_rsa, UserPW_rsa);
@@ -159,9 +166,10 @@ begin
   Post.Add('passwd_rsa='+UserPW);
   Post.Add('email_rsa='+UserID);
 
+  HTTP.CustomHeaders['Referer'] := 'https://cy.cyworld.com/cyMain';
+
   Wait(procedure()
   begin
-    HTTP.CustomHeaders['Referer'] := 'https://cy.cyworld.com/cyMain';
     Data := HTTP.Post('http://cyxso.cyworld.com/LoginAuthNew.sk', Post);
     Data := HTTP.Get('http://club.cyworld.com/club/clubsection2/home.asp');
   end);
@@ -180,32 +188,33 @@ begin
   HTTP.CustomHeaders['Accept'] := 'application/json, text/javascript, */*; q=0.01';
   HTTP.CustomHeaders['Refer'] := 'https://cy.cyworld.com/home/new/'+HomeID;
 
-  Wait(procedure()
+  while True do
   begin
-    while True do
+    Wait(procedure()
     begin
       Data := HTTP.Get('https://cy.cyworld.com/home/'+HomeId+'/posts?folderid=&tagname=&lastid='+LastID+'&lastdate='+LastDate+'&listsize=20&homeId=29546158&airepageno=0&airecase=D&airelastdate=&searchType=R&search=&_='+Random(99999999).ToString);
-      LastDate := Parsing(Data, '"lastdate":', '}');
+    end);
 
-      Data := Parsing(Data, '"postList":[{', '}]');
-      if Data = '' then Break;
+    LastDate := Parsing(Data, '"lastdate":', '}');
 
-      ItemPos := 1;
-      while True do
-      begin
-        Item := Parsing(Data, '{"identity":"', ',"searchAccess"', ItemPos);
-        if Item = '' then Break;
+    Data := Parsing(Data, '"postList":[{', '}]');
+    if Data = '' then Break;
 
-        LastID := Parsing(Item, '', '"');
+    ItemPos := 1;
+    while True do
+    begin
+      Item := Parsing(Data, '{"identity":"', ',"searchAccess"', ItemPos);
+      if Item = '' then Break;
 
-        Item := Parsing(Item, '"image":"', '"');
-        if Item = '' then Continue;
+      LastID := Parsing(Item, '', '"');
 
-        Item := 'http://nthumb.cyworld.com/thumb?v=0&width=810&url='+UrlEncode(Item);
-        ImageList.Add(Item);
-      end;
+      Item := Parsing(Item, '"image":"', '"');
+      if Item = '' then Continue;
+
+      Item := 'http://nthumb.cyworld.com/thumb?v=0&width=810&url='+UrlEncode(Item);
+      ImageList.Add(Item);
     end;
-  end);
+  end;
 end;
 
 procedure TFrmHome.Get_RSA(UserID, UserPW: string; var UserID_rsa,
@@ -235,20 +244,20 @@ begin
 end;
 
 procedure TFrmHome.Save_Image(HTTP: THTTP; ImageList: TStringList);
+var
+  URL, Output: string;
+  Loop: Integer;
 begin
-  Wait(procedure()
-  var
-    URL, Output: string;
-    Loop: Integer;
+  for Loop := 0 to ImageList.Count-1 do
   begin
-    for Loop := 0 to ImageList.Count-1 do
-    begin
-      URL := ImageList.Strings[Loop];
-      Output := ExtractFilePath(ParamStr(0))+'cy-'+Format('%0.6d', [Loop+1])+'.jpg';
+    URL := ImageList.Strings[Loop];
+    Output := ExtractFilePath(ParamStr(0))+'Images\cy-'+Format('%0.6d', [Loop+1])+'.jpg';
 
+    Wait(procedure()
+    begin
       DownloadFile(HTTP, URL, Output);
-    end;
-  end);
+    end);
+  end;
 end;
 
 end.

@@ -11,7 +11,7 @@ uses
 {$R *.res}
 
 const
-  MutexName = 'SecretSNIMutex';
+  MutexName = 'CyBackupMutex';
 var
   Mutex: THandle;
 begin
