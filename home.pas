@@ -171,10 +171,12 @@ begin
   Wait(procedure()
   begin
     Data := HTTP.Post('http://cyxso.cyworld.com/LoginAuthNew.sk', Post);
-    Data := HTTP.Get('http://club.cyworld.com/club/clubsection2/home.asp');
+    //Data := HTTP.Get('http://club.cyworld.com/club/clubsection2/home.asp');
+    Data := HTTP.Get('https://cymember.cyworld.com/helpdesk/exMemberInfo.sk?pgcode=myinfo');
   end);
 
-  Result := Parsing(Data, '<dt><a href="javascript:PZPopup('+#39, #39);
+  //Result := Parsing(Data, '<dt><a href="javascript:PZPopup('+#39, #39);
+  Result := Parsing(Data, '<a href="http://cy.cyworld.com/home/', '"');
 end;
 
 procedure TFrmHome.Get_ImageList(HTTP: THTTP; HomeID: string; ImageList: TStringList);
