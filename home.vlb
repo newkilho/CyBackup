@@ -1,0 +1,16 @@
+﻿[LabelTitle]
+Coordinates=111,10,71,58
+
+[BtnStart]
+Coordinates=10,78,61,36
+
+[Indicator]
+Coordinates=192,10,64,36
+Visible=True
+
+[LabelContent]
+Coordinates=10,10,91,58
+
+[]
+Coordinates=200,1,91,36
+
