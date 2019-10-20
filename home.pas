@@ -123,9 +123,15 @@ begin
     Halt;
   end;
 
+  Get_RSA(Edit_ID.Text, Edit_PW.Text, UserID_rsa, UserPW_rsa);
+  if (UserID_rsa = '') or (UserPW_rsa = '') then
+  begin
+    Showmessage('CScript.exe 가 실행되지 않습니다.');
+    Halt;
+  end;
+
   HTTP := THTTP.Create;
 
-  Get_RSA(Edit_ID.Text, Edit_PW.Text, UserID_rsa, UserPW_rsa);
   HomeID := Get_HomeID(HTTP, UserID_rsa, UserPW_rsa);
   if HomeID = '' then
   begin
