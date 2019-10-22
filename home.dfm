@@ -52,18 +52,25 @@ object FrmHome: TFrmHome
     OnClick = BtnStartClick
   end
   object Label1: TLabel
-    Left = 164
-    Top = 232
+    Left = 102
+    Top = 223
     Width = 40
     Height = 13
     Caption = #51060#47700#51068' :'
   end
   object Label2: TLabel
-    Left = 153
-    Top = 262
+    Left = 283
+    Top = 226
     Width = 51
     Height = 13
     Caption = #48708#48128#48264#54840' :'
+  end
+  object Label3: TLabel
+    Left = 158
+    Top = 261
+    Width = 146
+    Height = 13
+    Caption = 'https://cy.cyworld.com/home/'
   end
   object Indicator: TActivityIndicator
     Left = 233
@@ -72,15 +79,15 @@ object FrmHome: TFrmHome
     HelpType = htKeyword
   end
   object Edit_ID: TEdit
-    Left = 210
-    Top = 232
+    Left = 148
+    Top = 223
     Width = 121
     Height = 21
     TabOrder = 1
   end
   object Edit_PW: TEdit
-    Left = 210
-    Top = 259
+    Left = 340
+    Top = 223
     Width = 121
     Height = 21
     PasswordChar = '*'
@@ -1051,5 +1058,32 @@ object FrmHome: TFrmHome
     TabOrder = 3
     Visible = False
     WordWrap = False
+  end
+  object Edit_HomeID: TEdit
+    Left = 307
+    Top = 258
+    Width = 154
+    Height = 21
+    Enabled = False
+    TabOrder = 4
+  end
+  object Radio_Auth: TRadioButton
+    Left = 83
+    Top = 222
+    Width = 17
+    Height = 17
+    Checked = True
+    TabOrder = 5
+    TabStop = True
+    OnClick = Radio_AuthClick
+  end
+  object Radio_NotAuth: TRadioButton
+    Left = 83
+    Top = 260
+    Width = 75
+    Height = 17
+    Caption = #51452#49548#51077#47141' :'
+    TabOrder = 6
+    OnClick = Radio_AuthClick
   end
 end

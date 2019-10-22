@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.WinXCtrls, Vcl.Buttons,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.WinXCtrls, Vcl.Buttons, WinAPI.ShellAPI,
   JvExStdCtrls, JvHtControls, Vcl.StdCtrls, K.HTTP, K.Strings, K.Thread;
 
 type
@@ -18,13 +18,18 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Memo_JS: TMemo;
+    Edit_HomeID: TEdit;
+    Label3: TLabel;
+    Radio_Auth: TRadioButton;
+    Radio_NotAuth: TRadioButton;
     procedure BtnStartClick(Sender: TObject);
+    procedure Radio_AuthClick(Sender: TObject);
   private
     procedure Get_RSA(UserID: string; UserPW: string; var UserID_rsa: string; var UserPW_rsa: string);
     procedure Get_ImageList(HTTP: THTTP; HomeID: string; ImageList: TStringList);
     procedure Save_Image(HTTP: THTTP; ImageList: TStringList);
 
-    function Get_HomeID(HTTP: THTTP; UserID: string; UserPW: string): string;
+    function Get_HomeID(HTTP: THTTP; UserID_rsa: string; UserPW_rsa: string): string;
   public
     { Public declarations }
   end;
@@ -106,8 +111,15 @@ var
   ImageList: TStringList;
   UserID_rsa, UserPW_rsa, HomeID: string;
 begin
-  if Edit_ID.Text = '' then Exit;
-  if Edit_PW.Text = '' then Exit;
+  if Radio_Auth.Checked then
+  begin
+    if Edit_ID.Text = '' then Exit;
+    if Edit_PW.Text = '' then Exit;
+  end
+  else
+  begin
+    if Edit_HomeID.Text = '' then Exit;
+  end;
 
   BtnStart.Caption := '';
   BtnStart.Enabled := False;
@@ -123,30 +135,37 @@ begin
     Halt;
   end;
 
-  Get_RSA(Edit_ID.Text, Edit_PW.Text, UserID_rsa, UserPW_rsa);
-  if (UserID_rsa = '') or (UserPW_rsa = '') then
-  begin
-    Showmessage('CScript.exe 가 실행되지 않습니다.');
-    Halt;
-  end;
-
   HTTP := THTTP.Create;
 
-  HomeID := Get_HomeID(HTTP, UserID_rsa, UserPW_rsa);
-  if HomeID = '' then
+  if Radio_Auth.Checked then
   begin
-    Showmessage('인증이 실패하였습니다.');
+    Get_RSA(Edit_ID.Text, Edit_PW.Text, UserID_rsa, UserPW_rsa);
+    if (UserID_rsa = '') or (UserPW_rsa = '') then
+    begin
+      Showmessage('CScript.exe 가 실행되지 않습니다.');
+      Halt;
+    end;
 
-    BtnStart.Caption := '실행하기';
-    BtnStart.Enabled := True;
-    Edit_ID.Enabled := True;
-    Edit_PW.Enabled := True;
-    Indicator.Animate := False;
-    Indicator.Visible := False;
+    HomeID := Get_HomeID(HTTP, UserID_rsa, UserPW_rsa);
+    if HomeID = '' then
+    begin
+      Showmessage('인증이 실패하였습니다.');
 
-    HTTP.Free;
+      BtnStart.Caption := '실행하기';
+      BtnStart.Enabled := True;
+      Edit_ID.Enabled := True;
+      Edit_PW.Enabled := True;
+      Indicator.Animate := False;
+      Indicator.Visible := False;
 
-    Exit;
+      HTTP.Free;
+
+      Exit;
+    end;
+  end
+  else
+  begin
+    HomeID := Edit_HomeID.Text;
   end;
 
   ImageList := TStringList.Create;
@@ -156,10 +175,12 @@ begin
 
   HTTP.Free;
 
+  ShellExecute(0,PCHAR('open'),PCHAR('explorer.exe'),PCHAR(ExtractFilePath(ParamStr(0))+'Images'),NIL,SW_SHOW);
+
   Halt;
 end;
 
-function TFrmHome.Get_HomeID(HTTP: THTTP; UserID, UserPW: string): string;
+function TFrmHome.Get_HomeID(HTTP: THTTP; UserID_rsa, UserPW_rsa: string): string;
 var
   Data: string;
   Post: TStringList;
@@ -169,8 +190,8 @@ begin
   Post.Add('redirection=//cy.cyworld.com/cyMainS');
   Post.Add('passwd=');
   Post.Add('email=');
-  Post.Add('passwd_rsa='+UserPW);
-  Post.Add('email_rsa='+UserID);
+  Post.Add('passwd_rsa='+UserPW_rsa);
+  Post.Add('email_rsa='+UserID_rsa);
 
   HTTP.CustomHeaders['Referer'] := 'https://cy.cyworld.com/cyMain';
 
@@ -244,11 +265,21 @@ begin
   Script.SaveToFile(ExtractFilePath(ParamStr(0))+'CyBackup.js');
   Script.Free;
 
-  Data := GetDosOutput('cscript.exe "'+ExtractFilePath(ParamStr(0))+'CyBackup.js"');
+  Data := GetDosOutput('cscript.exe "'+ExtractFilePath(ParamStr(0))+'CyBackup.js"', '\');
   UserID_rsa := Parsing(Data, '<mail_rsa>', '</mail_rsa>');
   UserPW_rsa := Parsing(Data, '<pass_rsa>', '</pass_rsa>');
 
   DeleteFile(ExtractFilePath(ParamStr(0))+'CyBackup.js');
+end;
+
+procedure TFrmHome.Radio_AuthClick(Sender: TObject);
+var
+  Auth: Boolean;
+begin
+  Auth := TRadioButton(Sender).Name = 'Radio_Auth';
+  Edit_ID.Enabled := Auth;
+  Edit_PW.Enabled := Auth;
+  Edit_HomeID.Enabled := Not Auth;
 end;
 
 procedure TFrmHome.Save_Image(HTTP: THTTP; ImageList: TStringList);
