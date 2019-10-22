@@ -121,19 +121,19 @@ begin
     if Edit_HomeID.Text = '' then Exit;
   end;
 
-  BtnStart.Caption := '';
-  BtnStart.Enabled := False;
-  Edit_ID.Enabled := False;
-  Edit_PW.Enabled := False;
-  Indicator.Animate := True;
-  Indicator.Visible := True;
-
   CreateDir(ExtractFilePath(ParamStr(0))+'Images');
   if not DirectoryExists(ExtractFilePath(ParamStr(0))+'Images') then
   begin
     Showmessage('파일을 생성할 수 없습니다.');
     Halt;
   end;
+
+  BtnStart.Caption := '';
+  BtnStart.Enabled := False;
+  Edit_ID.Enabled := False;
+  Edit_PW.Enabled := False;
+  Indicator.Animate := True;
+  Indicator.Visible := True;
 
   HTTP := THTTP.Create;
 

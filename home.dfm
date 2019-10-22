@@ -53,14 +53,14 @@ object FrmHome: TFrmHome
   end
   object Label1: TLabel
     Left = 102
-    Top = 223
+    Top = 224
     Width = 40
     Height = 13
     Caption = #51060#47700#51068' :'
   end
   object Label2: TLabel
     Left = 283
-    Top = 226
+    Top = 224
     Width = 51
     Height = 13
     Caption = #48708#48128#48264#54840' :'
@@ -80,14 +80,14 @@ object FrmHome: TFrmHome
   end
   object Edit_ID: TEdit
     Left = 148
-    Top = 223
+    Top = 221
     Width = 121
     Height = 21
     TabOrder = 1
   end
   object Edit_PW: TEdit
     Left = 340
-    Top = 223
+    Top = 221
     Width = 121
     Height = 21
     PasswordChar = '*'
