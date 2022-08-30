@@ -151,8 +151,8 @@ object FrmCyBackup: TFrmCyBackup
     Left = 0
     Top = 41
     Width = 500
-    Height = 400
-    Align = alTop
+    Height = 384
+    Align = alClient
     BevelOuter = bvNone
     Color = clWhite
     Font.Charset = DEFAULT_CHARSET
@@ -163,5 +163,14 @@ object FrmCyBackup: TFrmCyBackup
     ParentBackground = False
     ParentFont = False
     TabOrder = 1
+  end
+  object ProgressBar1: TProgressBar
+    Left = 0
+    Top = 425
+    Width = 500
+    Height = 17
+    Align = alBottom
+    TabOrder = 2
+    Visible = False
   end
 end

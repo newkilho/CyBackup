@@ -2,7 +2,7 @@ object FrmHome: TFrmHome
   Left = 0
   Top = 0
   Caption = 'FrmHome'
-  ClientHeight = 373
+  ClientHeight = 384
   ClientWidth = 500
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
@@ -1085,5 +1085,14 @@ object FrmHome: TFrmHome
     Caption = #51452#49548#51077#47141' :'
     TabOrder = 6
     OnClick = Radio_AuthClick
+  end
+  object Chk_Detail: TCheckBox
+    Left = 32
+    Top = 348
+    Width = 73
+    Height = 17
+    Caption = #49345#49464#54168#51060#51648
+    Enabled = False
+    TabOrder = 7
   end
 end
